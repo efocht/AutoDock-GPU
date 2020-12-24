@@ -1081,8 +1081,6 @@ filled with clock() */
 #endif
 	} // End of while-loop
 
-	clock_stop_docking = clock();
-
 	//update progress bar (bar length is 50)mem_num_of_rotatingatoms_per_rotbond_const
 	while (curr_progress_cnt < 50) {
 		curr_progress_cnt++;
@@ -1107,6 +1105,7 @@ filled with clock() */
 		memcopyBufferObjectFromDevice(command_queue,cpu_energies,mem_dockpars_energies_next,size_energies);
 	}
 
+	clock_stop_docking = clock();
 
 #if defined (DOCK_DEBUG)
 	for (int cnt_pop=0;cnt_pop<size_populations/sizeof(float);cnt_pop++)
@@ -1145,8 +1144,8 @@ filled with clock() */
 
 	clock_stop_program_before_clustering = clock();
 	clusanal_gendlg(cpu_result_ligands, mypars->num_of_runs, myligand_init, mypars,
-					 mygrid, argc, argv, ELAPSEDSECS(clock_stop_docking, clock_start_docking)/mypars->num_of_runs,
-					 ELAPSEDSECS(clock_stop_program_before_clustering, clock_start_program));
+			mygrid, argc, argv, ELAPSEDSECS(clock_stop_docking, clock_start_docking),
+			ELAPSEDSECS(clock_stop_program_before_clustering, clock_start_program));
 
 
 	clock_stop_docking = clock();

@@ -386,7 +386,7 @@ void make_resfiles(float* final_population,
 }
 
 void cluster_analysis(Ligandresult myresults [], int num_of_runs, char* report_file_name, const Liganddata* ligand_ref,
-					  const Dockpars* mypars, const Gridinfo* mygrid, const int* argc, char** argv, const double docking_avg_runtime,
+					  const Dockpars* mypars, const Gridinfo* mygrid, const int* argc, char** argv, const double docking_runtime,
 					  const double program_runtime)
 //The function performs ranked cluster analisys similar to that of AutoDock and creates a file with report_file_name name, the result
 //will be written to it.
@@ -527,7 +527,7 @@ void cluster_analysis(Ligandresult myresults [], int num_of_runs, char* report_f
 }
 
 void clusanal_gendlg(Ligandresult myresults [], int num_of_runs, const Liganddata* ligand_ref,
-					 const Dockpars* mypars, const Gridinfo* mygrid, const int* argc, char** argv, const double docking_avg_runtime,
+					 const Dockpars* mypars, const Gridinfo* mygrid, const int* argc, char** argv, const double docking_runtime,
 					 const double program_runtime)
 //The function performs ranked cluster analisys similar to that of AutoDock and creates a file with report_file_name name, the result
 //will be written to it.
@@ -553,6 +553,8 @@ void clusanal_gendlg(Ligandresult myresults [], int num_of_runs, const Liganddat
 	double cluster_tolerance = mypars->rmsd_tolerance;
 	const double AD4_coeff_tors = mypars->coeffs.AD4_coeff_tors;
 	double torsional_energy;
+
+	double docking_avg_runtime = docking_runtime / (double)num_of_runs;
 
 	//first of all, let's calculate the constant torsional free energy term
 	torsional_energy = AD4_coeff_tors * ligand_ref->num_of_rotbonds;
@@ -808,6 +810,8 @@ void clusanal_gendlg(Ligandresult myresults [], int num_of_runs, const Liganddat
 	                		myresults[j].interE + torsional_energy, (myresults [j]).rmsd_from_cluscent, (myresults [j]).rmsd_from_ref);
 			}
 	}
+
+	fprintf(fp, "\nDocking run time %.3f sec\n", docking_runtime);
 
 	fclose(fp);
 
