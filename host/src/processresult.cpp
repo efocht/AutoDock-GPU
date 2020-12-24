@@ -386,7 +386,7 @@ void make_resfiles(float* final_population,
 }
 
 void cluster_analysis(Ligandresult myresults [], int num_of_runs, char* report_file_name, const Liganddata* ligand_ref,
-					  const Dockpars* mypars, const Gridinfo* mygrid, const int* argc, char** argv, const double docking_runtime,
+					  const Dockpars* mypars, const Gridinfo* mygrid, const int* argc, char** argv, const double docking_avg_runtime,
 					  const double program_runtime)
 //The function performs ranked cluster analisys similar to that of AutoDock and creates a file with report_file_name name, the result
 //will be written to it.
