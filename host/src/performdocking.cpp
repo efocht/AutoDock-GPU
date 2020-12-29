@@ -96,6 +96,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "stringify.h"
 #include "correct_grad_axisangle.h"
 
+#include <sys/time.h>
+
 int docking_with_gpu(const Gridinfo*  	 	mygrid,
 	         /*const*/ float*      		cpu_floatgrids,
                            Dockpars*   		mypars,
@@ -121,9 +123,10 @@ parameter myxrayligand:
 		describes the xray ligand
 		filled with get_xrayliganddata()
 parameters argc and argv:
-		are the corresponding command line arguments parameter clock_start_program:
+		are the corresponding command line arguments
+parameter clock_start_program:
 		contains the state of the clock tick counter at the beginning of the program
-filled with clock() */
+		filled with clock() */
 {
 // =======================================================================
 // OpenCL Host Setup
@@ -244,6 +247,8 @@ filled with clock() */
 	clock_t clock_start_docking;
 	clock_t	clock_stop_docking;
 	clock_t clock_stop_program_before_clustering;
+
+	timeval tv_start_docking, tv_stop_docking;
 
 	//setting number of blocks and threads
 	threadsPerBlock = NUM_OF_THREADS_PER_BLOCK;
@@ -554,6 +559,7 @@ filled with clock() */
 	*/
 
 	clock_start_docking = clock();
+	gettimeofday(&tv_start_docking, NULL);
 
 	//print progress bar
 #ifndef DOCK_DEBUG
@@ -1106,6 +1112,11 @@ filled with clock() */
 	}
 
 	clock_stop_docking = clock();
+	gettimeofday(&tv_stop_docking, NULL);
+	double elapsed_time_docking;
+	elapsed_time_docking = (((double)tv_stop_docking.tv_sec * 1.e6 + (double)tv_stop_docking.tv_usec) -
+				((double)tv_start_docking.tv_sec * 1.e6 + (double)tv_start_docking.tv_usec)) / 1.e6;
+
 
 #if defined (DOCK_DEBUG)
 	for (int cnt_pop=0;cnt_pop<size_populations/sizeof(float);cnt_pop++)
@@ -1144,7 +1155,7 @@ filled with clock() */
 
 	clock_stop_program_before_clustering = clock();
 	clusanal_gendlg(cpu_result_ligands, mypars->num_of_runs, myligand_init, mypars,
-			mygrid, argc, argv, ELAPSEDSECS(clock_stop_docking, clock_start_docking),
+			mygrid, argc, argv, elapsed_time_docking,
 			ELAPSEDSECS(clock_stop_program_before_clustering, clock_start_program));
 
 
